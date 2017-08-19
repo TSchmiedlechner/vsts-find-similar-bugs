@@ -1,7 +1,7 @@
 {
   "manifestVersion": 1,
   "id": "find-similar-workitems",
-  "version": "0.1.28",
+  "version": "0.1.29",
   "name": "FindSimilarWorkItems",
   "scopes": [],
   "description": "Adds an additional option to the context menu of work items, to search existing workitems semantically similar to the current one.",
