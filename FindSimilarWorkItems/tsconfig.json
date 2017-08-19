@@ -9,7 +9,6 @@
       "vss-web-extension-sdk",
       "q"
     ],
-
     "lib": [
       "dom",
       "es5",

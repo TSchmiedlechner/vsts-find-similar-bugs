@@ -1,11 +1,11 @@
 {
   "manifestVersion": 1,
-  "id": "testext",
-  "version": "0.1.1",
-  "name": "TestExtension",
+  "id": "find-similar-workitems",
+  "version": "0.1.28",
+  "name": "FindSimilarWorkItems",
   "scopes": [],
-  "description": "My extension makes hubs great again",
-  "publisher": "jgarverick",
+  "description": "Adds an additional option to the context menu of work items, to search existing workitems semantically similar to the current one.",
+  "publisher": "tschmiedlechner",
   "galleryFlags": [
     "Preview"
   ],
@@ -21,7 +21,7 @@
     "api-version/3.0"
   ],
   "tags": [
-    "Sample"
+    "Find Similar Workitems"
   ],
   "screenshots": [
     {
@@ -83,13 +83,15 @@
   ],
   "contributions": [
     {
-      "id": "testext",
-      "targets": ["ms.vss-releaseManagement-web.hub-group-rm","ms.vss-build-web.build-release-hub-group"],
-      "type": "ms.vss-web.hub",
+      "id": "find-similar-workitems-menu",
+      "type": "ms.vss-web.action",
+      "targets": [
+        "ms.vss-work-web.work-item-context-menu"
+      ],
       "properties": {
-        "name": "TestExtension",
-        "order": 100,
-        "uri": "static/index.html"
+        "group": "contributed",
+        "uri": "static/index.html",
+        "text": "Find similar workitems"
       }
     }
   ]
