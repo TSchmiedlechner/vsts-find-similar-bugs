@@ -1,9 +1,11 @@
 {
   "manifestVersion": 1,
-  "id": "find-similar-workitems",
-  "version": "0.1.29",
-  "name": "FindSimilarWorkItems",
-  "scopes": [],
+  "id": "find-similar-bugs",
+  "version": "0.1.51",
+  "name": "FindSimilarBugs",
+  "scopes": [
+    "vso.work_write"
+  ],
   "description": "Adds an additional option to the context menu of work items, to search existing workitems semantically similar to the current one.",
   "publisher": "tschmiedlechner",
   "galleryFlags": [
@@ -21,7 +23,7 @@
     "api-version/3.0"
   ],
   "tags": [
-    "Find Similar Workitems"
+    "Find Similar Bugs"
   ],
   "screenshots": [
     {
@@ -30,7 +32,7 @@
   ],
   "content": {
     "license": {
-      "path": "license.md"
+      "path": "LICENSE"
     },
     "details": {
       "path": "overview.md"
@@ -83,7 +85,7 @@
   ],
   "contributions": [
     {
-      "id": "find-similar-workitems-menu",
+      "id": "find-similar-bugs-menu",
       "type": "ms.vss-web.action",
       "targets": [
         "ms.vss-work-web.work-item-context-menu"
@@ -91,7 +93,7 @@
       "properties": {
         "group": "contributed",
         "uri": "static/index.html",
-        "text": "Find similar workitems"
+        "text": "Find similar bugs"
       }
     }
   ]
