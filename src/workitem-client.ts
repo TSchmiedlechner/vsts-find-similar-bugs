@@ -1,7 +1,5 @@
 /// <reference types="vss-web-extension-sdk" />
 
-require("./helpers/array-extensions");
-
 import WorkItemRestClient = require("TFS/WorkItemTracking/RestClient");
 import WorkItemServices = require("TFS/WorkItemTracking/Services");
 import { WorkItem } from "./models/workitem.model";
@@ -35,16 +33,24 @@ export class WorkItemClient {
             const workitemIds = queryResult.workItems.map(wi => wi.id);
             const columns = queryResult.columns.map(wiRef => wiRef.referenceName);
 
-            const chunks = workitemIds.createChunks(this.chunkSize);
-            let promises: Array<IPromise<WorkItem[]>>;
+            const chunks = this.createChunks(workitemIds, this.chunkSize);
+            let promises: Array<IPromise<WorkItem[]>> = [];
             for (let chunk of chunks) {
                 promises.push(client.getWorkItems(chunk, columns));
             }
 
-            return await Promise.all(promises);
+            return [].concat.apply([], await Promise.all(promises));
         }
         else {
             return [];
         }
+    }
+
+    private createChunks(array: number[], chunkSize: number): number[][] {
+        let chunks: number[][] = [];
+        for (let i = 0; i < array.length; i += chunkSize) {
+            chunks.push(array.slice(i, i + chunkSize));
+        }
+        return chunks;
     }
 }

@@ -14,8 +14,6 @@ let menuAction = {
         const workItemClient = new WorkItemClient("Bug");
         const currentWorkItem = await workItemClient.getCurrentWorkItemAsync(["System.Title", "Microsoft.VSTS.TCM.ReproSteps"]);
         const workItems = await workItemClient.getAllWorkItems(["System.Title", "Microsoft.VSTS.TCM.ReproSteps"]);
-
-        console.log(currentWorkItem);
         console.log(workItems);
        //  let matches = StringSimilarity.findBestMatch(reproSteps, workItems.map(wi => wi.fields["Microsoft.VSTS.TCM.ReproSteps"]));
     }
