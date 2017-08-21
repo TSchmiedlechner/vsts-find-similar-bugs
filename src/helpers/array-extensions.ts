@@ -4,7 +4,7 @@ interface Array<T> {
 
 Array.prototype.createChunks = function (chunkSize) {
 
-    let chunks: any[][];
+    let chunks: any[][] = [];
     for (let i = 0; i < this.length; i += this.chunkSize) {
         chunks.push(this.slice(i, i + this.chunkSize));
     }
