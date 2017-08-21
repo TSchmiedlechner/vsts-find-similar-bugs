@@ -1,12 +1,14 @@
 /// <reference types="vss-web-extension-sdk" />
 
+require("./helpers/array-extensions");
+
 import WorkItemRestClient = require("TFS/WorkItemTracking/RestClient");
 import WorkItemServices = require("TFS/WorkItemTracking/Services");
 import { WorkItem } from "./models/workitem.model";
 import { Field } from "./models/field.model";
 import { IWorkItemFormService } from "TFS/WorkItemTracking/Services";
 
-class WorkItemClient {
+export class WorkItemClient {
 
     private readonly chunkSize: number = 100;
 
