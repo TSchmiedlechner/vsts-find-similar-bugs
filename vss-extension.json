@@ -1,7 +1,7 @@
 {
   "manifestVersion": 1,
   "id": "find-similar-bugs",
-  "version": "0.1.51",
+  "version": "0.1.52",
   "name": "FindSimilarBugs",
   "scopes": [
     "vso.work_write"

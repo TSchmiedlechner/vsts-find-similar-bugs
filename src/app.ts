@@ -35,7 +35,10 @@ let menuAction = {
                                 client.getWorkItems(chunk, columns)
                                     .then(workItems => {
                                         // let similarity = StringSimilarity.compareTwoStrings("healed", "sealed");
-                                        let matches = StringSimilarity.findBestMatch(reproSteps, workItems.map(wi => wi.fields["Microsoft.VSTS.TCM.ReproSteps"]));
+                                        let matches = StringSimilarity.findBestMatch(reproSteps,
+                                            workItems
+                                                .filter(wi => wi.fields["Microsoft.VSTS.TCM.ReproSteps"])
+                                                .map(wi => wi.fields["Microsoft.VSTS.TCM.ReproSteps"]));
                                         console.log(matches);
                                         let end = new Date().getTime();
                                         console.log("Finding the workitems took: " + (end - start));
