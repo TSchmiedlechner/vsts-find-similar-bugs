@@ -2,9 +2,10 @@
 
 import WorkItemRestClient = require("TFS/WorkItemTracking/RestClient");
 import WorkItemServices = require("TFS/WorkItemTracking/Services");
-import { WorkItem } from "./models/workitem.model";
+import { TfsWorkItem } from "./models/tfsworkitem.model";
 import { Field } from "./models/field.model";
 import { IWorkItemFormService } from "TFS/WorkItemTracking/Services";
+import { WorkItem } from "TFS/WorkItemTracking/Contracts";
 
 export class WorkItemClient {
 
@@ -12,16 +13,16 @@ export class WorkItemClient {
 
     constructor(private workItemType: string) { }
 
-    async getCurrentWorkItemAsync(fieldsToLoad: string[]): Promise<WorkItem> {
+    async getCurrentWorkItemAsync(fieldsToLoad: string[]): Promise<TfsWorkItem> {
         const service = await WorkItemServices.WorkItemFormService.getService();
 
         const id = await service.getId();
         const fields = await service.getFieldValues(fieldsToLoad);
 
-        return new WorkItem(id, fieldsToLoad.map(x => new Field(x, fields[x])));
+        return new TfsWorkItem(id, fieldsToLoad.map(x => new Field(x, fields[x])));
     }
 
-    async getAllWorkItems(fieldsToLoad: string[]): Promise<WorkItem> {
+    async getAllWorkItems(fieldsToLoad: string[]): Promise<TfsWorkItem[]> {
 
         const client = WorkItemRestClient.getClient();
         const queryResult = await client.queryByWiql({
@@ -39,11 +40,22 @@ export class WorkItemClient {
                 promises.push(client.getWorkItems(chunk, columns));
             }
 
-            return [].concat.apply([], await Promise.all(promises));
+            let results = await Promise.all(promises);
+            return [].concat.apply([], results)
+                .filter(x => x)
+                .map(x => new TfsWorkItem(x.id, this.mapFields(x.fields)));
         }
         else {
             return [];
         }
+    }
+
+    private mapFields(inputFields: any): Field[] {
+        let fields: Field[] = [];
+        for (let key in inputFields) {
+            fields[key] = inputFields[key];
+        }
+        return fields;
     }
 
     private createChunks(array: number[], chunkSize: number): number[][] {
