@@ -1,7 +1,7 @@
 {
   "manifestVersion": 1,
   "id": "find-similar-workitems",
-  "version": "0.1.128",
+  "version": "0.1.176",
   "name": "Find similar workitems",
   "scopes": [
     "vso.work",
@@ -65,6 +65,14 @@
     },
     {
       "path": "static/images/logo.png",
+      "addressable": true
+    },
+    {
+      "path": "static/images/link.png",
+      "addressable": true
+    },
+    {
+      "path": "static/images/open.png",
       "addressable": true
     },
     {

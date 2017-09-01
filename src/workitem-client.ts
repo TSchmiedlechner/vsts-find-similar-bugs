@@ -8,7 +8,6 @@ import { IWorkItemFormService } from "TFS/WorkItemTracking/Services";
 import { WorkItem } from "TFS/WorkItemTracking/Contracts";
 
 export class WorkItemClient {
-
     private readonly chunkSize: number = 100;
 
     constructor(private workItemType: string) { }
@@ -30,7 +29,6 @@ export class WorkItemClient {
         });
 
         if (queryResult.workItems.length > 0) {
-
             const workitemIds = queryResult.workItems.map(wi => wi.id);
             const columns = queryResult.columns.map(wiRef => wiRef.referenceName);
 
@@ -43,7 +41,7 @@ export class WorkItemClient {
             let results = await Promise.all(promises);
             return [].concat.apply([], results)
                 .filter(x => x)
-                .map(x => new TfsWorkItem(x.id, this.mapFields(x.fields)));
+                .map(x => new TfsWorkItem(x.id, this.mapFields(x.fields), x.url));
         }
         else {
             return [];
