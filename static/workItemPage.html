@@ -10,6 +10,7 @@
 <body style="height: 100%">
     <script type="text/javascript">
         VSS.init({
+            explicitNotifyLoaded: true,
             usePlatformScripts: true,
             usePlatformStyles: true
         });
@@ -24,7 +25,9 @@
     </div>
     <script type="text/javascript">
         VSS.ready(function () {
-            VSS.require(["../dist/app"], function (app) { });
+            VSS.require(["../dist/app"], function (app) {
+                VSS.notifyLoadSucceeded();
+            });
         });
     </script>
 </body>
