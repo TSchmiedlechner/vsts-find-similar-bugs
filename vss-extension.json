@@ -1,13 +1,13 @@
 {
   "manifestVersion": 1,
   "id": "find-similar-workitems",
-  "version": "0.1.201",
+  "version": "0.1.202",
   "name": "Find similar workitems",
   "scopes": [
     "vso.work",
     "vso.work_write"
   ],
-  "description": "Adds an additional option to the context menu of work items, to search existing workitems semantically similar to the current one.",
+  "description": "Adds an additional tab to the work item edit form to search existing workitems that are semantically similar to the current one.",
   "publisher": "tschmiedlechner",
   "galleryFlags": [
     "Preview"
@@ -24,13 +24,9 @@
     "api-version/3.0"
   ],
   "tags": [
-    "Find Similar Bugs"
+    "Find similar bugs", "Similar work items", "Work item search"
   ],
-  "screenshots": [
-    {
-      "path": "static/images/screen1.png"
-    }
-  ],
+  "screenshots": [],
   "content": {
     "license": {
       "path": "LICENSE"
