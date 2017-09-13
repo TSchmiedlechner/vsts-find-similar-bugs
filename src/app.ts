@@ -19,6 +19,9 @@ let page = {
             ? (await workItemClient.getAllWorkItems(["System.Title", "Microsoft.VSTS.TCM.ReproSteps"])).filter(x => x.id !== currentWorkItem.id)
             : await workItemClient.getAllWorkItems(["System.Title", "Microsoft.VSTS.TCM.ReproSteps"]);
 
+        const workItemFormService = await WorkItemServices.WorkItemFormService.getService();
+        const relations = await workItemFormService.getWorkItemRelations();
+
         let options: Grids.IGridOptions = {
             width: "100%",
             height: "100%",
@@ -59,25 +62,45 @@ let page = {
                         indentIndex,
                         columnOrder) => {
 
+                        const suffix = "/" + rowInfo.row.context.firstChild.innerText;
+                        let relation = relations.filter(x => x.url.indexOf(suffix, this.length - suffix.length) !== -1)[0];
+                        let linkItemIcon = relation ? "images/unlink.png" : "images/link.png";
+                        let linkItemTitle = relation ? "Remove workitem relation" : "Link workitem to current one";
+
                         return $("<div>").addClass("grid-cell").css("padding", "5px")
                             .append($("<span>").addClass("btn").attr("title", "Open workitem in new tab").append($("<img>").attr("src", "images/open.png"))
                                 .on("click", () => {
                                     let id = rowInfo.row.context.firstChild.innerText;
-                                    WorkItemServices.WorkItemFormNavigationService.getService().then(function (workItemNavSvc) {
+                                    WorkItemServices.WorkItemFormNavigationService.getService().then(workItemNavSvc => {
                                         workItemNavSvc.openWorkItem(id, true);
                                     });
                                 })
                             )
-                            .append($("<span>").addClass("btn").attr("title", "Link workitem to current one").append($("<img>").attr("src", "images/link.png"))
-                                .on("click", () => {
-                                    let id = +rowInfo.row.context.firstChild.innerText;
-                                    WorkItemServices.WorkItemFormService.getService().then(function (workitemFormService) {
-                                        workitemFormService.addWorkItemRelations([{
-                                            rel: "Related",
-                                            url: workItems.filter(x => x.id === id)[0].resourceUrl,
-                                            attributes: {}
-                                        }]);
-                                    });
+                            .append($("<span>").addClass("btn").attr("title", linkItemTitle).append($("<img>").attr("src", linkItemIcon))
+                                .on("click", (event) => {
+                                    if (relation) {
+                                        WorkItemServices.WorkItemFormService.getService().then(workitemFormService => {
+                                            workitemFormService.removeWorkItemRelations([relation]).then(() => {
+                                                relation = null;
+                                                setRelationLink(event.currentTarget, false);
+                                            });
+                                        });
+                                    }
+                                    else {
+                                        let id = +rowInfo.row.context.firstChild.innerText;
+                                        WorkItemServices.WorkItemFormService.getService().then(workitemFormService => {
+                                            workitemFormService.addWorkItemRelations([{
+                                                rel: "Related",
+                                                url: workItems.filter(x => x.id === id)[0].resourceUrl,
+                                                attributes: {}
+                                            }]).then(() => {
+                                                workitemFormService.getWorkItemRelations().then(relations => {
+                                                    relation = relations.filter(x => x.url.indexOf(suffix, this.length - suffix.length) !== -1)[0];
+                                                });
+                                                setRelationLink(event.currentTarget, true);
+                                            });
+                                        });
+                                    }
                                 })
                             );
                     }
@@ -89,6 +112,13 @@ let page = {
         let grid = Controls.create(Grids.Grid, $("#grid-container"), options);
         VSS.notifyLoadSucceeded();
     }
+};
+
+const setRelationLink = function (element: Element, relationExists: boolean): void {
+    let linkItemIcon = relationExists ? "images/unlink.png" : "images/link.png";
+    let linkItemTitle = relationExists ? "Remove workitem relation" : "Link workitem to current one";
+    element.setAttribute("title", linkItemTitle);
+    element.children[0].setAttribute("src", linkItemIcon);
 };
 
 const extensionContext = VSS.getExtensionContext();
