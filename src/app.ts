@@ -42,7 +42,7 @@ let page = {
                     w.fields["System.Title"],
                     Math.floor(similarity * 1000) / 1000,
                     w.id,
-                    reproStepsCurrent
+                    reproStepsOther
                 ];
             }),
             columns: [
