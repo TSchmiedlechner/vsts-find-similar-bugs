@@ -1,13 +1,13 @@
 {
   "manifestVersion": 1,
   "id": "find-similar-workitems",
-  "version": "0.1.219",
+  "version": "1.0.0",
   "name": "Find similar workitems",
   "scopes": [
     "vso.work",
     "vso.work_write"
   ],
-  "description": "Adds an additional tab to the work item edit form to search existing workitems that are semantically similar to the current one.",
+  "description": "Adds an additional tab to the workitem edit form to search existing workitems that are semantically similar to the current one.",
   "publisher": "tschmiedlechner",
   "galleryFlags": [
     "Preview"
@@ -24,7 +24,7 @@
     "api-version/3.0"
   ],
   "tags": [
-    "Find similar bugs", "Similar work items", "Work item search"
+    "Find similar bugs", "Similar workitems", "Similar work items", "Workitem search"
   ],
   "screenshots": [],
   "content": {
@@ -37,18 +37,18 @@
   },
   "links": {
     "getstarted": {
-      "uri": "https://bit.ly"
+      "uri": "https://github.com/TSchmiedlechner/vsts-find-similar-workitems"
     },
     "support": {
-      "uri": "https://bit.ly"
+      "uri": "https://github.com/TSchmiedlechner/vsts-find-similar-workitems"
     },
     "issues": {
-      "uri": "https://bit.ly"
+      "uri": "https://github.com/TSchmiedlechner/vsts-find-similar-workitems/issues"
     }
   },
   "repository": {
     "type": "git",
-    "uri": "https://bit.ly"
+    "uri": "https://github.com/TSchmiedlechner/vsts-find-similar-workitems"
   },
   "branding": {
     "color": "rgb(220, 235, 252)",
@@ -100,7 +100,7 @@
     {
       "id": "find-similar-workitems-form-page",
       "type": "ms.vss-work-web.work-item-form-page",
-      "description": "Work item form page that lists semantically similar elements.",
+      "description": "Workitem form page that lists semantically similar elements.",
       "targets": [
         "ms.vss-work-web.work-item-form"
       ],
