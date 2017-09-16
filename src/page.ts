@@ -9,9 +9,6 @@ import { WorkItemRelation } from "TFS/WorkItemTracking/Contracts";
 import { TfsWorkItem } from "./models/tfsworkitem.model";
 import { WorkItemTypeInfo } from "./workitem-typeinfo";
 
-const striptags = require("striptags");
-const decode = require("decode-html");
-
 export class Page {
 
     private grid: Grids.Grid;
@@ -113,12 +110,11 @@ export class Page {
     }
 
     private mapWorkItems(workItem: TfsWorkItem, currentWorkItem: TfsWorkItem) {
-
         let similarities: number[] = [];
         let similarity: number = 0;
         for (let fieldName in this.currentWorkItemFields) {
-            let fieldOther = striptags(decode(workItem.fields.filter(x => x.name === fieldName)[0].value));
-            let fieldCurrent = striptags(decode(currentWorkItem.fields.filter(x => x.name === fieldName)[0].value));
+            let fieldOther = workItem.getFieldValue(fieldName);
+            let fieldCurrent = currentWorkItem.getFieldValue(fieldName);
 
             similarity += StringSimilarity.compareTwoStrings(fieldCurrent, fieldOther) * (1.0 / this.currentWorkItemFields.length);
         }

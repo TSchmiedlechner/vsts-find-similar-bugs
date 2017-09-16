@@ -1,4 +1,4 @@
-/// <reference types="vss-web-extension-sdk" />
+    /// <reference types="vss-web-extension-sdk" />
 
 import WorkItemRestClient = require("TFS/WorkItemTracking/RestClient");
 import WorkItemServices = require("TFS/WorkItemTracking/Services");
@@ -6,6 +6,9 @@ import { TfsWorkItem } from "./models/tfsworkitem.model";
 import { Field } from "./models/field.model";
 import { IWorkItemFormService } from "TFS/WorkItemTracking/Services";
 import { WorkItem } from "TFS/WorkItemTracking/Contracts";
+
+const striptags = require("striptags");
+const decode = require("decode-html");
 
 export class WorkItemClient {
     private readonly chunkSize: number = 100;
@@ -21,7 +24,16 @@ export class WorkItemClient {
         const id = await service.getId();
         const fieldIds = fieldsToLoad.concat(this.workItemTypeId);
         const fields = await service.getFieldValues(fieldIds);
-        return new TfsWorkItem(id, fieldIds.map(x => new Field(x, fields[x])));
+        for (let key in fieldsToLoad) {
+            if (fields[key]) {
+                fields[key] = striptags(decode(fields[key]));
+            }
+            else {
+                fields[key] = "";
+            }
+        }
+
+        return new TfsWorkItem(id, fieldsToLoad.map(x => new Field(x, fields[x])));
     }
 
     async getAllWorkItems(workItemType: string, fieldsToLoad: string[]): Promise<TfsWorkItem[]> {
