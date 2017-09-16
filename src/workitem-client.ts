@@ -9,23 +9,25 @@ import { WorkItem } from "TFS/WorkItemTracking/Contracts";
 
 export class WorkItemClient {
     private readonly chunkSize: number = 100;
+    private readonly workItemTypeId: string = "System.WorkItemType";
 
-    constructor(private workItemType: string) { }
+    async getCurrentWorkItemTypeAsync(): Promise<string> {
+        const service = await WorkItemServices.WorkItemFormService.getService();
+        return await service.getFieldValue(this.workItemTypeId) as string;
+    }
 
     async getCurrentWorkItemAsync(fieldsToLoad: string[]): Promise<TfsWorkItem> {
         const service = await WorkItemServices.WorkItemFormService.getService();
-
         const id = await service.getId();
-        const fields = await service.getFieldValues(fieldsToLoad);
-
-        return new TfsWorkItem(id, fieldsToLoad.map(x => new Field(x, fields[x])));
+        const fieldIds = fieldsToLoad.concat(this.workItemTypeId);
+        const fields = await service.getFieldValues(fieldIds);
+        return new TfsWorkItem(id, fieldIds.map(x => new Field(x, fields[x])));
     }
 
-    async getAllWorkItems(fieldsToLoad: string[]): Promise<TfsWorkItem[]> {
-
+    async getAllWorkItems(workItemType: string, fieldsToLoad: string[]): Promise<TfsWorkItem[]> {
         const client = WorkItemRestClient.getClient();
         const queryResult = await client.queryByWiql({
-            query: `Select ${fieldsToLoad.join(",")} FROM WorkItems Where [System.WorkItemType] = '${this.workItemType}'`
+            query: `Select ${fieldsToLoad.concat(this.workItemTypeId).join(",")} FROM WorkItems Where [System.WorkItemType] = '${workItemType}'`
         });
 
         if (queryResult.workItems.length > 0) {

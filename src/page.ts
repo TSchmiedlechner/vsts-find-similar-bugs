@@ -7,6 +7,7 @@ import WorkItemServices = require("TFS/WorkItemTracking/Services");
 import { WorkItemClient } from "./workitem-client";
 import { WorkItemRelation } from "TFS/WorkItemTracking/Contracts";
 import { TfsWorkItem } from "./models/tfsworkitem.model";
+import { WorkItemTypeInfo } from "./workitem-typeinfo";
 
 const striptags = require("striptags");
 const decode = require("decode-html");
@@ -16,34 +17,34 @@ export class Page {
     private grid: Grids.Grid;
     private workItemClient: WorkItemClient;
     private currentWorkItem: TfsWorkItem;
+    private currentWorkItemFields: string[];
     private workItems: TfsWorkItem[];
     private workItemFormService: WorkItemServices.IWorkItemFormService;
     private currentRelations: WorkItemRelation[];
 
     constructor() {
-        this.workItemClient = new WorkItemClient("Bug");
+        this.workItemClient = new WorkItemClient();
     }
 
     async reload() {
-        await this.loadData();
+        let currentWorkItemType = await this.workItemClient.getCurrentWorkItemTypeAsync();
+        this.currentWorkItemFields = WorkItemTypeInfo.getFieldsForType(currentWorkItemType);
+        this.currentWorkItem = await this.workItemClient.getCurrentWorkItemAsync(this.currentWorkItemFields);
+        this.currentRelations = await this.workItemFormService.getWorkItemRelations();
+
+        this.workItems = this.currentWorkItem && this.currentWorkItem.id > 0
+            ? (await this.workItemClient.getAllWorkItems(currentWorkItemType, this.currentWorkItemFields)).filter(x => x.id !== this.currentWorkItem.id)
+            : await this.workItemClient.getAllWorkItems(currentWorkItemType, this.currentWorkItemFields);
+
         this.grid.setDataSource(this.workItems.map(w => this.mapWorkItems(w, this.currentWorkItem)));
         this.grid.redraw();
     }
 
     async onLoaded(workItem) {
         this.workItemFormService = await WorkItemServices.WorkItemFormService.getService();
-
         this.grid = await this.createGrid();
         await this.reload();
         VSS.notifyLoadSucceeded();
-    }
-
-    private async loadData() {
-        this.currentWorkItem = await this.workItemClient.getCurrentWorkItemAsync(["System.Title", "Microsoft.VSTS.TCM.ReproSteps"]);
-        this.currentRelations = await this.workItemFormService.getWorkItemRelations();
-        this.workItems = this.currentWorkItem && this.currentWorkItem.id > 0
-            ? (await this.workItemClient.getAllWorkItems(["System.Title", "Microsoft.VSTS.TCM.ReproSteps"])).filter(x => x.id !== this.currentWorkItem.id)
-            : await this.workItemClient.getAllWorkItems(["System.Title", "Microsoft.VSTS.TCM.ReproSteps"]);
     }
 
     private async createGrid(): Promise<Grids.Grid> {
