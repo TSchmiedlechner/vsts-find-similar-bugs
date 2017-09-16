@@ -113,28 +113,22 @@ export class Page {
     }
 
     private mapWorkItems(workItem: TfsWorkItem, currentWorkItem: TfsWorkItem) {
-        let reproStepsOther: string = "";
-        if (workItem.fields.indexOf["Microsoft.VSTS.TCM.ReproSteps"] > -1) {
-            reproStepsOther = striptags(decode(workItem.fields.filter(x => x.name === "Microsoft.VSTS.TCM.ReproSteps")[0].value));
-        }
 
-        let reproStepsCurrent: string = "";
-        if (currentWorkItem.fields.indexOf["Microsoft.VSTS.TCM.ReproSteps"] > -1) {
-            reproStepsCurrent = striptags(decode(currentWorkItem.fields.filter(x => x.name === "Microsoft.VSTS.TCM.ReproSteps")[0].value));
-        }
+        let similarities: number[] = [];
+        let similarity: number = 0;
+        for (let fieldName in this.currentWorkItemFields) {
+            let fieldOther = striptags(decode(workItem.fields.filter(x => x.name === fieldName)[0].value));
+            let fieldCurrent = striptags(decode(currentWorkItem.fields.filter(x => x.name === fieldName)[0].value));
 
-        let titleOther: string = striptags(decode(workItem.fields["System.Title"]));
-        let titleCurrent: string = striptags(decode(currentWorkItem.fields.filter(x => x.name === "System.Title")[0].value));
-        let similarityTitle = StringSimilarity.compareTwoStrings(titleCurrent, titleOther);
-        let similarityReproSteps = StringSimilarity.compareTwoStrings(reproStepsCurrent, reproStepsOther);
-        let similarity: number = similarityTitle * 0.7 + similarityReproSteps * 0.3;
+            similarity += StringSimilarity.compareTwoStrings(fieldCurrent, fieldOther) * (1.0 / this.currentWorkItemFields.length);
+        }
 
         return [
             workItem.id,
-            workItem.fields["System.Title"],
+            workItem.fields[this.currentWorkItemFields[0]],
             Math.floor(similarity * 1000) / 1000,
             workItem.id,
-            reproStepsOther
+            this.currentWorkItemFields[1]
         ];
     }
 

@@ -1,7 +1,7 @@
 {
   "manifestVersion": 1,
   "id": "find-similar-workitems",
-  "version": "1.0.10",
+  "version": "1.0.12",
   "name": "Find similar workitems",
   "scopes": [
     "vso.work",
