@@ -25,13 +25,14 @@ export class Page {
 
     async reload() {
         let currentWorkItemType = await this.workItemClient.getCurrentWorkItemTypeAsync();
+        let currentProjectName = await this.workItemClient.getCurrentProjectNameAsync();
         this.currentWorkItemFields = WorkItemTypeInfo.getFieldsForType(currentWorkItemType);
         this.currentWorkItem = await this.workItemClient.getCurrentWorkItemAsync(this.currentWorkItemFields);
         this.currentRelations = await this.workItemFormService.getWorkItemRelations();
 
         this.workItems = this.currentWorkItem && this.currentWorkItem.id > 0
-            ? (await this.workItemClient.getAllWorkItems(currentWorkItemType, this.currentWorkItemFields)).filter(x => x.id !== this.currentWorkItem.id)
-            : await this.workItemClient.getAllWorkItems(currentWorkItemType, this.currentWorkItemFields);
+            ? (await this.workItemClient.getAllWorkItems(currentProjectName, currentWorkItemType, this.currentWorkItemFields)).filter(x => x.id !== this.currentWorkItem.id)
+            : await this.workItemClient.getAllWorkItems(currentProjectName, currentWorkItemType, this.currentWorkItemFields);
 
         this.grid.setDataSource(this.workItems.map(w => this.mapWorkItems(w, this.currentWorkItem)));
         this.grid.redraw();

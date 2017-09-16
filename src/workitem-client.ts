@@ -13,10 +13,16 @@ const decode = require("decode-html");
 export class WorkItemClient {
     private readonly chunkSize: number = 100;
     private readonly workItemTypeId: string = "System.WorkItemType";
+    private readonly projectNameId: string = "System.TeamProject";
 
     async getCurrentWorkItemTypeAsync(): Promise<string> {
         const service = await WorkItemServices.WorkItemFormService.getService();
         return await service.getFieldValue(this.workItemTypeId) as string;
+    }
+
+    async getCurrentProjectNameAsync(): Promise<string> {
+        const service = await WorkItemServices.WorkItemFormService.getService();
+        return await service.getFieldValue(this.projectNameId) as string;
     }
 
     async getCurrentWorkItemAsync(fieldsToLoad: string[]): Promise<TfsWorkItem> {
@@ -35,10 +41,10 @@ export class WorkItemClient {
         return new TfsWorkItem(id, fieldsToLoad.map(x => new Field(x, fields[x])));
     }
 
-    async getAllWorkItems(workItemType: string, fieldsToLoad: string[]): Promise<TfsWorkItem[]> {
+    async getAllWorkItems(projectName: string, workItemType: string, fieldsToLoad: string[]): Promise<TfsWorkItem[]> {
         const client = WorkItemRestClient.getClient();
         const queryResult = await client.queryByWiql({
-            query: `Select ${fieldsToLoad.join(",")} FROM WorkItems Where [System.WorkItemType] = '${workItemType}'`
+            query: `Select ${fieldsToLoad.join(",")} FROM WorkItems Where [${this.workItemTypeId}] = '${workItemType}' AND [${this.projectNameId}] = '${projectName}'`
         });
 
         if (queryResult.workItems.length > 0) {
