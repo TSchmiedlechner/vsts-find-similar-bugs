@@ -62,7 +62,7 @@ export class Page {
                             .append(this.createLinkButton(rowInfo));
                     }
                 },
-                { text: "Repro Steps", index: 4, fixed: true }
+                { text: "Description", index: 4, fixed: true }
             ]
         };
 
@@ -112,19 +112,18 @@ export class Page {
     private mapWorkItems(workItem: TfsWorkItem, currentWorkItem: TfsWorkItem) {
         let similarities: number[] = [];
         let similarity: number = 0;
-        for (let fieldName in this.currentWorkItemFields) {
+        for (let fieldName of this.currentWorkItemFields) {
             let fieldOther = workItem.getFieldValue(fieldName);
             let fieldCurrent = currentWorkItem.getFieldValue(fieldName);
-
             similarity += StringSimilarity.compareTwoStrings(fieldCurrent, fieldOther) * (1.0 / this.currentWorkItemFields.length);
         }
 
         return [
             workItem.id,
-            workItem.fields[this.currentWorkItemFields[0]],
+            workItem.fields[0].value,
             Math.floor(similarity * 1000) / 1000,
             workItem.id,
-            this.currentWorkItemFields[1]
+            workItem.fields[1].value
         ];
     }
 

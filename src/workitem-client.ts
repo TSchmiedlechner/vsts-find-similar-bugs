@@ -22,9 +22,8 @@ export class WorkItemClient {
     async getCurrentWorkItemAsync(fieldsToLoad: string[]): Promise<TfsWorkItem> {
         const service = await WorkItemServices.WorkItemFormService.getService();
         const id = await service.getId();
-        const fieldIds = fieldsToLoad.concat(this.workItemTypeId);
-        const fields = await service.getFieldValues(fieldIds);
-        for (let key in fieldsToLoad) {
+        const fields = await service.getFieldValues(fieldsToLoad);
+        for (let key of fieldsToLoad) {
             if (fields[key]) {
                 fields[key] = striptags(decode(fields[key]));
             }
@@ -39,7 +38,7 @@ export class WorkItemClient {
     async getAllWorkItems(workItemType: string, fieldsToLoad: string[]): Promise<TfsWorkItem[]> {
         const client = WorkItemRestClient.getClient();
         const queryResult = await client.queryByWiql({
-            query: `Select ${fieldsToLoad.concat(this.workItemTypeId).join(",")} FROM WorkItems Where [System.WorkItemType] = '${workItemType}'`
+            query: `Select ${fieldsToLoad.join(",")} FROM WorkItems Where [System.WorkItemType] = '${workItemType}'`
         });
 
         if (queryResult.workItems.length > 0) {
@@ -55,17 +54,22 @@ export class WorkItemClient {
             let results = await Promise.all(promises);
             return [].concat.apply([], results)
                 .filter(x => x)
-                .map(x => new TfsWorkItem(x.id, this.mapFields(x.fields), x.url));
+                .map(x => new TfsWorkItem(x.id, this.mapFields(fieldsToLoad, x.fields), x.url));
         }
         else {
             return [];
         }
     }
 
-    private mapFields(inputFields: any): Field[] {
+    private mapFields(fieldsToLoad: string[], inputFields: any): Field[] {
         let fields: Field[] = [];
-        for (let key in inputFields) {
-            fields[key] = inputFields[key];
+        for (let key of fieldsToLoad) {
+            if (inputFields[key]) {
+                fields.push(new Field(key, striptags(decode(inputFields[key]))));
+            }
+            else {
+                fields.push(new Field(key, ""));
+            }
         }
         return fields;
     }
