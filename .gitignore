@@ -263,3 +263,4 @@ FindSimilarWorkItems/tschmiedlechner.find-similar-workitems-0.1.28.vsix
 
 **/*.vsix
 dist/
+deploy.bat
