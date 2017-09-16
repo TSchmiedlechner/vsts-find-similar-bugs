@@ -4,9 +4,7 @@ const page = new Page();
 const extensionContext = VSS.getExtensionContext();
 
 $("#btnReload").on("click", async () => {
-    console.log("Reloading...");
     await page.reload();
-    console.log("Loaded");
 });
 
 // >= TFS 2017
