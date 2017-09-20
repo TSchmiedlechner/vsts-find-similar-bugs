@@ -10,7 +10,8 @@
   "description": "Adds an additional tab to the workitem edit form to search existing workitems that are semantically similar to the current one.",
   "publisher": "tschmiedlechner",
   "galleryFlags": [
-    "Preview"
+    "Preview",
+    "Public"
   ],
   "icons": {
     "default": "static/images/logo.png"
